@@ -29,7 +29,7 @@ export default function ListenerDashboard() {
   const toggleAvailability = useMutation(api.listeners.toggleAvailability);
   const activeConversation = useQuery(api.matching.getMyActiveConversation);
   const conversations = useQuery(api.matching.getMyConversations);
-  const myRatings = useQuery(api.ratings.getMyRatings);
+
 
   const handleSignOut = async () => {
     await signOut();
@@ -108,9 +108,7 @@ export default function ListenerDashboard() {
   const isAvailable = profile?.availability === "available";
   const recentConversations =
     conversations?.filter((c) => c.myRole === "listener").slice(0, 5) || [];
-  const avgRating = myRatings && myRatings.length > 0
-    ? (myRatings.reduce((sum, r) => sum + r.stars, 0) / myRatings.length).toFixed(1)
-    : "—";
+  const avgRating = profile?.avgRating != null ? profile.avgRating.toFixed(1) : "—";
 
   return (
     <div className="min-h-screen px-4 py-8">

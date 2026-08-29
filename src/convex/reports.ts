@@ -20,6 +20,11 @@ export const createReport = mutation({
     const conversation = await ctx.db.get(args.conversationId);
     if (!conversation) throw new Error("Conversation not found");
 
+    // Only conversation participants can file a report
+    if (conversation.seekerId !== userId && conversation.listenerId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     const reportId = await ctx.db.insert("reports", {
       conversationId: args.conversationId,
       reporterId: userId,

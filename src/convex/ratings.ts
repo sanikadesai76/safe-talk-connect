@@ -44,24 +44,32 @@ export const submitFeedback = mutation({
         .withIndex("by_user", (q) => q.eq("userId", conversation.listenerId))
         .first();
       if (listenerProfile) {
-        const allRatings = await ctx.db
-          .query("ratings")
-          .collect();
-
-        // Get all ratings for conversations involving this listener
+        // Get all conversations for this listener (indexed)
         const listenerConversations = await ctx.db
           .query("conversations")
           .withIndex("by_listener", (q) =>
             q.eq("listenerId", conversation.listenerId)
           )
           .collect();
-        const convIds = new Set(listenerConversations.map((c) => c._id));
 
-        const listenerRatings = allRatings.filter((r) => convIds.has(r.conversationId));
+        // Get ratings for each conversation (indexed by_conversation)
+        const allListenerRatings: number[] = [];
+        for (const conv of listenerConversations) {
+          const convRatings = await ctx.db
+            .query("ratings")
+            .withIndex("by_conversation", (q) =>
+              q.eq("conversationId", conv._id)
+            )
+            .collect();
+          for (const r of convRatings) {
+            allListenerRatings.push(r.stars);
+          }
+        }
+
         const avgRating =
-          listenerRatings.length > 0
-            ? listenerRatings.reduce((sum, r) => sum + r.stars, 0) /
-              listenerRatings.length
+          allListenerRatings.length > 0
+            ? allListenerRatings.reduce((sum, s) => sum + s, 0) /
+              allListenerRatings.length
             : args.stars;
 
         await ctx.db.patch(listenerProfile._id, {

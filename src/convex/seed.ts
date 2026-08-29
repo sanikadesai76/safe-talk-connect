@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -75,22 +76,22 @@ export const promoteToAdmin = mutation({
 export const setFirstAdmin = mutation({
   args: {},
   handler: async (ctx) => {
-    // Check if any admin exists
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    // Only allow if no admin exists yet
     const admins = await ctx.db
       .query("users")
       .withIndex("by_role", (q) => q.eq("role", "admin"))
       .first();
     if (admins) return { adminExists: true };
 
-    // Find any user without a role and make them admin
-    const user = await ctx.db
-      .query("users")
-      .filter((q) => q.eq(q.field("role"), undefined))
-      .first();
+    // Only the caller (who must have no role yet) can promote themselves
+    const caller = await ctx.db.get(userId);
+    if (!caller) return { noUserFound: true };
+    if (caller.role) return { alreadyHasRole: true };
 
-    if (!user) return { noUserFound: true };
-
-    await ctx.db.patch(user._id, { role: "admin", status: "active" });
-    return { success: true, userId: user._id };
+    await ctx.db.patch(userId, { role: "admin", status: "active" });
+    return { success: true, userId };
   },
 });

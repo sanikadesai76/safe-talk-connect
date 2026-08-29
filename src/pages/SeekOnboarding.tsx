@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fadeUpExit } from "@/lib/animations";
 import {
   RefreshCw,
@@ -47,10 +47,13 @@ export default function SeekOnboarding() {
   const [waitingQueue, setWaitingQueue] = useState(false);
 
   // Redirect if already in a conversation
-  if (activeConversation) {
-    navigate(`/chat/${activeConversation._id}`);
-    return null;
-  }
+  useEffect(() => {
+    if (activeConversation) {
+      navigate(`/chat/${activeConversation._id}`);
+    }
+  }, [activeConversation, navigate]);
+
+  if (activeConversation) return null;
 
   const toggleCategory = (id: string) => {
     setSelectedCategories((prev) =>
