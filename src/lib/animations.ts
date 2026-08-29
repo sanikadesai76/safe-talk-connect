@@ -1,4 +1,4 @@
-// Shared animation configs for SafeTalk pages
+// Shared animation configs for Sathiii pages
 // The ease property must be typed as a tuple for framer-motion
 
 export const fadeUp = {

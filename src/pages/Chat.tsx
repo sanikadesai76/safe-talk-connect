@@ -361,7 +361,7 @@ export default function Chat() {
           <DialogHeader>
             <DialogTitle>Report this user</DialogTitle>
             <DialogDescription>
-              Help us keep SafeTalk safe. Select a reason for your report.
+              Help us keep Sathiii safe. Select a reason for your report.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
@@ -428,7 +428,7 @@ export default function Chat() {
               Safety & Help
             </DialogTitle>
             <DialogDescription>
-              SafeTalk is not an emergency service or substitute for professional
+              Sathiii is not an emergency service or substitute for professional
               medical care.
             </DialogDescription>
           </DialogHeader>

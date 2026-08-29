@@ -32,7 +32,7 @@ export default function Privacy() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-2">1. Information We Collect</h2>
               <p className="text-sm leading-relaxed">
-                SafeTalk collects minimal personal information. We collect your email address for
+                Sathiii collects minimal personal information. We collect your email address for
                 authentication purposes only. We do not collect your real name, address, phone
                 number, or other personally identifiable information unless you choose to provide it.
               </p>

@@ -97,7 +97,7 @@ export const findListener = mutation({
     await ctx.db.insert("messages", {
       conversationId,
       senderId: userId,
-      senderAnonymousName: "SafeTalk",
+      senderAnonymousName: "Sathiii",
       content: "You've been matched! This is a safe, anonymous space. Take your time.",
       timestamp: Date.now(),
       isSystem: true,
@@ -213,7 +213,7 @@ export const endConversation = mutation({
     await ctx.db.insert("messages", {
       conversationId: args.conversationId,
       senderId: userId,
-      senderAnonymousName: "SafeTalk",
+      senderAnonymousName: "Sathiii",
       content: "This conversation has ended. Thank you for connecting.",
       timestamp: Date.now(),
       isSystem: true,

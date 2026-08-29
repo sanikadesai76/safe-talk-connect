@@ -117,14 +117,14 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
               <div className="flex justify-center">
                     <img
                       src={logo}
-                      alt="SafeTalk"
+                      alt="Sathiii"
                       width={64}
                       height={64}
                       className="rounded-2xl mb-4 mt-4 cursor-pointer"
                       onClick={() => navigate("/")}
                     />
                   </div>
-                <CardTitle className="text-xl">Welcome to SafeTalk</CardTitle>
+                <CardTitle className="text-xl">Welcome to Sathiii</CardTitle>
                 <CardDescription>
                   Enter your email to log in or sign up
                 </CardDescription>
@@ -268,7 +268,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
           )}
 
           <div className="py-4 px-6 text-xs text-center text-muted-foreground bg-muted/50 border-t rounded-b-2xl">
-            SafeTalk — Anonymous emotional support
+            Sathiii — A safe place to talk
           </div>
         </Card>
         </div>

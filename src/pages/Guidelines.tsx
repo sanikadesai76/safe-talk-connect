@@ -32,7 +32,7 @@ export default function Guidelines() {
           className="glass-card rounded-2xl p-8 mb-6"
         >
           <p className="text-muted-foreground leading-relaxed mb-6">
-            SafeTalk is a community built on trust, respect, and genuine human connection.
+            Sathiii is a community built on trust, respect, and genuine human connection.
             These guidelines help keep the platform safe and supportive for everyone.
           </p>
 
@@ -83,7 +83,7 @@ export default function Guidelines() {
               <div>
                 <h3 className="font-semibold text-foreground mb-1">No romantic or sexual behavior</h3>
                 <p className="text-sm text-muted-foreground">
-                  SafeTalk is strictly platonic. Do not make romantic advances, flirt, or share
+                  Sathiii is strictly platonic. Do not make romantic advances, flirt, or share
                   sexual content. This is grounds for immediate removal.
                 </p>
               </div>

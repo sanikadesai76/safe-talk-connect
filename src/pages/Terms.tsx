@@ -32,7 +32,7 @@ export default function Terms() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-2">1. Acceptance of Terms</h2>
               <p className="text-sm leading-relaxed">
-                By accessing or using SafeTalk, you agree to be bound by these Terms of Service.
+                By accessing or using Sathiii, you agree to be bound by these Terms of Service.
                 If you do not agree, please do not use the platform.
               </p>
             </div>
@@ -40,7 +40,7 @@ export default function Terms() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-2">2. Platform Purpose</h2>
               <p className="text-sm leading-relaxed">
-                SafeTalk is a peer-listening platform for anonymous emotional support. It is NOT a
+                Sathiii is a peer-listening platform for anonymous emotional support. It is NOT a
                 medical service, therapy service, dating platform, or emergency service. By using
                 this platform, you acknowledge this distinction.
               </p>
@@ -58,7 +58,7 @@ export default function Terms() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-2">4. No Warranty</h2>
               <p className="text-sm leading-relaxed">
-                SafeTalk is provided "as is" without warranties. We do not guarantee that the
+                Sathiii is provided "as is" without warranties. We do not guarantee that the
                 platform will be available at all times or that conversations will be free of
                 disruption.
               </p>
@@ -67,7 +67,7 @@ export default function Terms() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-2">5. Limitation of Liability</h2>
               <p className="text-sm leading-relaxed">
-                SafeTalk and its operators are not liable for any damages arising from the use of
+                Sathiii and its operators are not liable for any damages arising from the use of
                 the platform. Users are responsible for their own safety and well-being.
               </p>
             </div>

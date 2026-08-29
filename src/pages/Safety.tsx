@@ -44,7 +44,7 @@ export default function Safety() {
                 This is not an emergency service
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                SafeTalk is not a substitute for professional medical or
+                Sathiii is not a substitute for professional medical or
                 psychological care. If you or someone you know is in immediate
                 danger, please contact emergency services right away.
               </p>
@@ -140,7 +140,7 @@ export default function Safety() {
         >
           <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
             <Shield className="w-5 h-5 text-primary" />
-            SafeTalk Safety Features
+            Sathiii Safety Features
           </h3>
           <ul className="space-y-3 text-sm text-muted-foreground">
             <li className="flex items-start gap-3">

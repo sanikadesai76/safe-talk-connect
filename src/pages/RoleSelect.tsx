@@ -66,7 +66,7 @@ export default function RoleSelect() {
         </div>
 
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-3">
-          How would you like to use SafeTalk?
+          How would you like to use Sathiii?
         </h1>
         <p className="text-muted-foreground text-lg mb-10 max-w-lg mx-auto">
           Choose your role. You can always change this later.

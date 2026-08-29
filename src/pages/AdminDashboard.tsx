@@ -95,7 +95,7 @@ export default function AdminDashboard() {
           <div>
             <p className="text-sm text-muted-foreground">Admin dashboard</p>
             <h1 className="text-2xl font-bold text-foreground">
-              SafeTalk Administration
+              Sathiii Administration
             </h1>
           </div>
           <div className="flex items-center gap-2">

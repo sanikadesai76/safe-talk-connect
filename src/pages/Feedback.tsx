@@ -49,7 +49,7 @@ export default function Feedback() {
             Thank you for your feedback
           </h1>
           <p className="text-muted-foreground mb-6">
-            Your feedback helps us keep SafeTalk safe and effective.
+            Your feedback helps us keep Sathiii safe and effective.
           </p>
           <Button onClick={() => navigate("/")} className="rounded-xl">
             Go home

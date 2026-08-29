@@ -37,7 +37,7 @@ function GlassNav() {
               <HandHeart className="w-4 h-4 text-primary" />
             </div>
             <span className="text-lg font-semibold tracking-tight text-foreground">
-              SafeTalk
+              Sathiii
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -100,7 +100,7 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto text-center relative">
           <motion.div {...fadeUp} className="mb-6 inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 text-sm text-muted-foreground">
             <Shield className="w-4 h-4 text-primary" />
-            <span>A safe, anonymous space for real human connection</span>
+            <span>A safe space for honest conversations</span>
           </motion.div>
 
           <motion.h1
@@ -108,9 +108,9 @@ export default function Landing() {
             transition={{ ...fadeUp.transition, delay: 0.1 }}
             className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1]"
           >
-            You don't have to
+            A safe place
             <br />
-            <span className="text-primary">carry everything alone.</span>
+            <span className="text-primary">to talk.</span>
           </motion.h1>
 
           <motion.p
@@ -118,8 +118,8 @@ export default function Landing() {
             transition={{ ...fadeUp.transition, delay: 0.2 }}
             className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
-            Talk anonymously with a real person who is there to listen — without
-            judgment, dating, or pressure.
+            When you have no one to turn to, Sathiii connects you with a real
+            listener — anonymously, without judgment or pressure.
           </motion.p>
 
           <motion.div
@@ -190,15 +190,15 @@ export default function Landing() {
                 step: "2",
               },
               {
-                icon: <Heart className="w-5 h-5" />,
-                title: "Talk anonymously",
+                icon:              <Heart className="w-5 h-5" />,
+                title: "Talk freely",
                 desc: "Have a private, judgment-free conversation.",
                 step: "3",
               },
               {
-                icon: <Sparkles className="w-5 h-5" />,
+                icon:              <Sparkles className="w-5 h-5" />,
                 title: "Share feedback",
-                desc: "Help us keep the experience safe for everyone.",
+                desc: "Let us know how it went so we can keep improving.",
                 step: "4",
               },
             ].map((item, i) => (
@@ -223,7 +223,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* What SafeTalk Is / Is Not */}
+      {/* What Sathiii Is / Is Not */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <motion.div
@@ -233,12 +233,12 @@ export default function Landing() {
             className="text-center mb-14"
           >
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-              What SafeTalk is
+              What Sathiii is
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* What SafeTalk IS */}
+            {/* What Sathiii IS */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -247,7 +247,7 @@ export default function Landing() {
             >
               <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-emerald-500" />
-                What SafeTalk is
+                What Sathiii is
               </h3>
               <ul className="space-y-4">
                 {[
@@ -265,7 +265,7 @@ export default function Landing() {
               </ul>
             </motion.div>
 
-            {/* What SafeTalk is NOT */}
+            {/* What Sathiii is NOT */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -274,7 +274,7 @@ export default function Landing() {
             >
               <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                 <XCircle className="w-5 h-5 text-red-400" />
-                What SafeTalk is NOT
+                What Sathiii is NOT
               </h3>
               <ul className="space-y-4">
                 {[
@@ -311,7 +311,7 @@ export default function Landing() {
               Important Safety Notice
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              SafeTalk is <strong>not</strong> an emergency service and is{" "}
+              Sathiii is <strong>not</strong> an emergency service and is{" "}
               <strong>not</strong> a substitute for professional medical or
               psychological care. If you or someone you know is in immediate
               danger, please contact your local emergency services or crisis
@@ -429,9 +429,8 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-10 px-4 border-t border-border/50">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <HandHeart className="w-4 h-4" />
-            <span>SafeTalk — Anonymous emotional support</span>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">              <HandHeart className="w-4 h-4" />
+            <span>Sathiii</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <button
