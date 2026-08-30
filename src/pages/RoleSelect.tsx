@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MessageCircle,
   Ear,
@@ -21,28 +21,26 @@ const fadeUp = {
 
 export default function RoleSelect() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const setRole = useMutation(api.users.setRole);
   const [loading, setLoading] = useState<"seeker" | "listener" | null>(null);
 
-  if (user?.role === "seeker") {
-    navigate("/seek");
-    return null;
-  }
-  if (user?.role === "listener") {
-    navigate("/listen");
-    return null;
-  }
-  if (user?.role === "admin") {
-    navigate("/admin");
-    return null;
-  }
+  // Redirect users who already have a role — never in the render body
+  useEffect(() => {
+    if (isLoading) return;
+    if (user?.role === "seeker") navigate("/dashboard", { replace: true });
+    else if (user?.role === "listener") navigate("/listener-dashboard", { replace: true });
+    else if (user?.role === "admin") navigate("/admin", { replace: true });
+  }, [user, isLoading, navigate]);
+
+  // Show nothing while loading or redirecting
+  if (isLoading || user?.role) return null;
 
   const handleSelect = async (role: "seeker" | "listener") => {
     setLoading(role);
     try {
       await setRole({ role });
-      if (role === "seeker") navigate("/seek");
+      if (role === "seeker") navigate("/dashboard");
       else navigate("/listen");
     } catch (err) {
       console.error(err);

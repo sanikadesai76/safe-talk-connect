@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
@@ -37,7 +37,7 @@ type Tab = "overview" | "users" | "listeners" | "reports";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isLoading } = useAuth();
   const metrics = useQuery(api.admin.getDashboardMetrics);
   const allUsers = useQuery(api.users.getAllUsers);
   const pendingListeners = useQuery(api.listeners.getPendingListeners);
@@ -64,18 +64,8 @@ export default function AdminDashboard() {
     navigate("/");
   };
 
-  if (!user || user.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Shield className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground mb-4">Admin access required</p>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            Go home
-          </Button>
-        </div>
-      </div>
-    );
+  if (!isLoading && user && user.role !== "admin") {
+    return <Navigate to="/" replace />;
   }
 
   const filteredUsers = allUsers?.filter(

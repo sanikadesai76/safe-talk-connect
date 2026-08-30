@@ -20,6 +20,7 @@ const Chat = lazy(() => import("./pages/Chat.tsx"));
 const Feedback = lazy(() => import("./pages/Feedback.tsx"));
 const Profile = lazy(() => import("./pages/Profile.tsx"));
 const History = lazy(() => import("./pages/History.tsx"));
+const SeekerDashboard = lazy(() => import("./pages/SeekerDashboard.tsx"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard.tsx"));
 const AdminSafetyResources = lazy(() => import("./pages/AdminSafetyResources.tsx"));
 const Safety = lazy(() => import("./pages/Safety.tsx"));
@@ -135,7 +136,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/" element={<Landing />} />
               <Route
                 path="/auth"
-                element={<AuthPage redirectAfterAuth="/role" />}
+                element={<AuthPage redirectAfterAuth="/dashboard" />}
               />
               <Route
                 path="/role"
@@ -158,6 +159,14 @@ createRoot(document.getElementById("root")!).render(
                 element={
                   <RequireAuth>
                     <ListenOnboarding />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <RequireAuth>
+                    <SeekerDashboard />
                   </RequireAuth>
                 }
               />

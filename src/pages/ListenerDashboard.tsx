@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
@@ -7,7 +7,6 @@ import { useMutation, useQuery } from "convex/react";
 import { fadeUp } from "@/lib/animations";
 import {
   LogOut,
-  Ear,
   Clock,
   MessageCircle,
   Star,
@@ -20,16 +19,13 @@ import {
   Heart,
 } from "lucide-react";
 
-
-
 export default function ListenerDashboard() {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isLoading } = useAuth();
   const profile = useQuery(api.listeners.getMyProfile);
   const toggleAvailability = useMutation(api.listeners.toggleAvailability);
   const activeConversation = useQuery(api.matching.getMyActiveConversation);
   const conversations = useQuery(api.matching.getMyConversations);
-
 
   const handleSignOut = async () => {
     await signOut();
@@ -46,6 +42,20 @@ export default function ListenerDashboard() {
       console.error(err);
     }
   };
+
+  // Role guard: redirect non-listeners
+  if (!isLoading && user && user.role !== "listener") {
+    return <Navigate to="/seek" replace />;
+  }
+
+  // Still loading
+  if (isLoading || (user?.role === "listener" && profile === undefined)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   if (profile?.approvalStatus === "pending") {
     return (
