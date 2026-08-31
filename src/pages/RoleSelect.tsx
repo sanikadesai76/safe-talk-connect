@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Loader2,
   HandHeart,
+  Shield,
 } from "lucide-react";
 
 const fadeUp = {
@@ -23,7 +24,10 @@ export default function RoleSelect() {
   const navigate = useNavigate();
   const { user, isLoading } = useAuth();
   const setRole = useMutation(api.users.setRole);
+  const setFirstAdmin = useMutation(api.seed.setFirstAdmin);
   const [loading, setLoading] = useState<"seeker" | "listener" | null>(null);
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminError, setAdminError] = useState<string | null>(null);
 
   // Redirect users who already have a role — never in the render body
   useEffect(() => {
@@ -129,15 +133,48 @@ export default function RoleSelect() {
           </motion.button>
         </div>
 
-        <p className="mt-8 text-xs text-muted-foreground">
-          Looking for admin access?{" "}
-          <button
-            onClick={() => navigate("/auth")}
-            className="underline hover:text-foreground transition-colors"
-          >
-            Sign in with admin account
-          </button>
-        </p>
+        <div className="mt-8 space-y-3">
+          <div className="glass-card rounded-2xl p-4 max-w-sm mx-auto">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                <Shield className="w-4 h-4 text-amber-600" />
+              </div>
+              <div className="text-left flex-1">
+                <p className="text-xs text-muted-foreground">
+                  First time setting up? Become the admin to manage listeners, reports, and safety resources.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-xl text-xs shrink-0"
+                disabled={adminLoading}
+                onClick={async () => {
+                  setAdminLoading(true);
+                  setAdminError(null);
+                  try {
+                    await setFirstAdmin();
+                    navigate("/admin", { replace: true });
+                  } catch (err) {
+                    const msg = err instanceof Error ? err.message : "Could not set up admin.";
+                    setAdminError(msg);
+                  } finally {
+                    setAdminLoading(false);
+                  }
+                }}
+              >
+                {adminLoading ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  "Become admin"
+                )}
+              </Button>
+            </div>
+            {adminError && (
+              <p className="text-xs text-red-600 mt-2">{adminError}</p>
+            )}
+          </div>
+        </div>
       </motion.div>
     </div>
   );
