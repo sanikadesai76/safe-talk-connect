@@ -62,7 +62,16 @@ export const toggleAvailability = mutation({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .first();
     if (!profile) throw new Error("No listener profile found");
-    if (profile.approvalStatus !== "approved") throw new Error("Not approved");
+    if (profile.approvalStatus !== "approved")
+      throw new Error(
+        profile.approvalStatus === "pending"
+          ? "Your application is still pending approval. Please wait for an admin to approve your account before going online."
+          : profile.approvalStatus === "rejected"
+            ? "Your listener application was not approved. Please contact support."
+            : profile.approvalStatus === "suspended"
+              ? "Your listener account has been suspended. Please contact an administrator."
+              : "You must be an approved listener to go online."
+      );
 
     await ctx.db.patch(profile._id, {
       availability: args.available ? "available" : "unavailable",

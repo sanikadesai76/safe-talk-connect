@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { fadeUp } from "@/lib/animations";
-import {
-  LogOut,
+import { fadeUp } from "@/lib/animations";import { useState } from "react";
+import { LogOut,
   Clock,
   MessageCircle,
   Star,
@@ -26,6 +25,8 @@ export default function ListenerDashboard() {
   const toggleAvailability = useMutation(api.listeners.toggleAvailability);
   const activeConversation = useQuery(api.matching.getMyActiveConversation);
   const conversations = useQuery(api.matching.getMyConversations);
+  const [toggleError, setToggleError] = useState<string | null>(null);
+  const [isToggling, setIsToggling] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -34,12 +35,17 @@ export default function ListenerDashboard() {
 
   const handleToggleAvailability = async () => {
     if (!profile) return;
+    setToggleError(null);
+    setIsToggling(true);
     try {
       await toggleAvailability({
         available: profile.availability !== "available",
       });
     } catch (err) {
-      console.error(err);
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setToggleError(message);
+    } finally {
+      setIsToggling(false);
     }
   };
 
@@ -198,10 +204,20 @@ export default function ListenerDashboard() {
               onClick={handleToggleAvailability}
               variant={isAvailable ? "outline" : "default"}
               className="rounded-xl"
+              disabled={isToggling}
             >
-              {isAvailable ? "Go offline" : "Go online"}
+              {isToggling
+                ? "Updating..."
+                : isAvailable
+                  ? "Go offline"
+                  : "Go online"}
             </Button>
           </div>
+          {toggleError && (
+            <div className="mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-700 text-sm">
+              {toggleError}
+            </div>
+          )}
         </motion.div>
 
         {/* Stats Grid */}

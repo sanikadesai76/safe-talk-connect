@@ -812,7 +812,7 @@ describe("Listener: toggleAvailability restrictions", () => {
     patchRow("listenerProfiles", profileId, { approvalStatus: "pending" });
     await expect(
       toggleAvailabilityH(makeCtx(listenerId), { available: true })
-    ).rejects.toThrow("Not approved");
+    ).rejects.toThrow("pending approval");
   });
 
   it("user without listener profile cannot toggle", async () => {
