@@ -13,36 +13,30 @@ import {
   AlertTriangle,
   Star,
   Clock,
-  Shield,
   CheckCircle,
   XCircle,
-  Ban,
-  UserX,
   Eye,
   Search,
   Settings,
-  RefreshCw,
-  BookOpen,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 type Tab = "overview" | "users" | "listeners" | "reports";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, signOut, isLoading } = useAuth();
-  const metrics = useQuery(api.admin.getDashboardMetrics);
-  const allUsers = useQuery(api.users.getAllUsers);
-  const pendingListeners = useQuery(api.listeners.getPendingListeners);
-  const allListeners = useQuery(api.listeners.getAllListeners);
-  const reports = useQuery(api.admin.getRecentReports, {});
+
+  // Determine whether to fire admin queries.
+  // All hooks must be called unconditionally (Rules of Hooks).
+  // Convex useQuery accepts "skip" to avoid firing.
+  const isAdmin = !isLoading && user?.role === "admin";
+
+  // --- All hooks called unconditionally ---
+  const metrics = useQuery(api.admin.getDashboardMetrics, isAdmin ? {} : "skip");
+  const allUsers = useQuery(api.users.getAllUsers, isAdmin ? {} : "skip");
+  const pendingListeners = useQuery(api.listeners.getPendingListeners, isAdmin ? {} : "skip");
+  const allListeners = useQuery(api.listeners.getAllListeners, isAdmin ? {} : "skip");
+  const reports = useQuery(api.admin.getRecentReports, isAdmin ? {} : "skip");
   const approveListener = useMutation(api.listeners.approveListener);
   const rejectListener = useMutation(api.listeners.rejectListener);
   const suspendListener = useMutation(api.listeners.suspendListener);
@@ -57,14 +51,25 @@ export default function AdminDashboard() {
   const [seeding, setSeeding] = useState(false);
   const [promoting, setPromoting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedReport, setSelectedReport] = useState<string | null>(null);
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
   };
 
-  if (!isLoading && user && user.role !== "admin") {
+  // --- Early returns AFTER all hooks (Rules of Hooks satisfied) ---
+
+  // Still loading auth
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  // Non-admins get redirected
+  if (user.role !== "admin") {
     return <Navigate to="/" replace />;
   }
 
@@ -72,7 +77,7 @@ export default function AdminDashboard() {
     (u) =>
       u.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       u.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.anonymousName?.toLowerCase().includes(searchQuery.toLowerCase())
+      u.anonymousName?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -143,10 +148,30 @@ export default function AdminDashboard() {
             className="space-y-6"
           >
             <div className="flex gap-3">
-              <Button variant="outline" size="sm" className="rounded-xl" disabled={seeding} onClick={async () => { setSeeding(true); try { await seedResources(); } catch (e) { console.error(e); } setSeeding(false); }}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl"
+                disabled={seeding}
+                onClick={async () => {
+                  setSeeding(true);
+                  try { await seedResources(); } catch (e) { console.error(e); }
+                  setSeeding(false);
+                }}
+              >
                 {seeding ? "Seeding..." : "Seed Safety Resources"}
               </Button>
-              <Button variant="outline" size="sm" className="rounded-xl" disabled={promoting} onClick={async () => { setPromoting(true); try { await setFirstAdmin(); } catch (e) { console.error(e); } setPromoting(false); }}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl"
+                disabled={promoting}
+                onClick={async () => {
+                  setPromoting(true);
+                  try { await setFirstAdmin(); } catch (e) { console.error(e); }
+                  setPromoting(false);
+                }}
+              >
                 {promoting ? "Promoting..." : "Set First User as Admin"}
               </Button>
             </div>
@@ -183,10 +208,7 @@ export default function AdminDashboard() {
 
         {/* Users Tab */}
         {tab === "users" && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
             <div className="glass-card rounded-2xl p-4 mb-4 flex items-center gap-3">
               <Search className="w-4 h-4 text-muted-foreground" />
               <input
@@ -217,31 +239,16 @@ export default function AdminDashboard() {
                   </div>
                   <div className="flex items-center gap-1">
                     {u.status !== "suspended" ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => suspendUserMutation({ targetUserId: u._id })}
-                        className="rounded-xl text-xs"
-                      >
+                      <Button variant="outline" size="sm" onClick={() => suspendUserMutation({ targetUserId: u._id })} className="rounded-xl text-xs">
                         Suspend
                       </Button>
                     ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => reactivateUser({ targetUserId: u._id })}
-                        className="rounded-xl text-xs"
-                      >
+                      <Button variant="outline" size="sm" onClick={() => reactivateUser({ targetUserId: u._id })} className="rounded-xl text-xs">
                         Reactivate
                       </Button>
                     )}
                     {u.status !== "banned" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => banUser({ targetUserId: u._id })}
-                        className="rounded-xl text-xs text-red-600"
-                      >
+                      <Button variant="outline" size="sm" onClick={() => banUser({ targetUserId: u._id })} className="rounded-xl text-xs text-red-600">
                         Ban
                       </Button>
                     )}
@@ -254,12 +261,7 @@ export default function AdminDashboard() {
 
         {/* Listeners Tab */}
         {tab === "listeners" && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
-            {/* Pending Approvals */}
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
             {pendingListeners && pendingListeners.length > 0 && (
               <div>
                 <h2 className="text-lg font-semibold text-foreground mb-3">
@@ -278,25 +280,15 @@ export default function AdminDashboard() {
                             {l.trainingCompleted ? "Complete" : "Incomplete"}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Languages: {l.languages.join(", ")} · Topics:{" "}
-                            {l.topics.join(", ")}
+                            Languages: {l.languages.join(", ")} · Topics: {l.topics.join(", ")}
                           </p>
                         </div>
                         <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            onClick={() => approveListener({ profileId: l._id })}
-                            className="rounded-xl text-xs"
-                          >
+                          <Button size="sm" onClick={() => approveListener({ profileId: l._id })} className="rounded-xl text-xs">
                             <CheckCircle className="w-3 h-3 mr-1" />
                             Approve
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => rejectListener({ profileId: l._id })}
-                            className="rounded-xl text-xs"
-                          >
+                          <Button size="sm" variant="outline" onClick={() => rejectListener({ profileId: l._id })} className="rounded-xl text-xs">
                             <XCircle className="w-3 h-3 mr-1" />
                             Reject
                           </Button>
@@ -308,11 +300,8 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* All Listeners */}
             <div>
-              <h2 className="text-lg font-semibold text-foreground mb-3">
-                All Listeners
-              </h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">All Listeners</h2>
               <div className="space-y-2">
                 {allListeners?.map((l) => (
                   <div key={l._id} className="glass-card rounded-2xl p-4">
@@ -330,20 +319,12 @@ export default function AdminDashboard() {
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {l.approvalStatus} · {l.availability} · Rating:{" "}
-                            {l.avgRating || "—"} · Conversations:{" "}
-                            {l.totalConversations || 0}
+                            {l.avgRating || "—"} · Conversations: {l.totalConversations || 0}
                           </p>
                         </div>
                       </div>
                       {l.approvalStatus === "approved" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            suspendListener({ profileId: l._id })
-                          }
-                          className="rounded-xl text-xs"
-                        >
+                        <Button variant="outline" size="sm" onClick={() => suspendListener({ profileId: l._id })} className="rounded-xl text-xs">
                           Suspend
                         </Button>
                       )}
@@ -357,10 +338,7 @@ export default function AdminDashboard() {
 
         {/* Reports Tab */}
         {tab === "reports" && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
             <div className="space-y-2">
               {reports?.length === 0 ? (
                 <div className="glass-card rounded-2xl p-8 text-center">
@@ -368,10 +346,7 @@ export default function AdminDashboard() {
                 </div>
               ) : (
                 reports?.map((r) => (
-                  <div
-                    key={r._id}
-                    className="glass-card rounded-2xl p-4"
-                  >
+                  <div key={r._id} className="glass-card rounded-2xl p-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2">
@@ -384,18 +359,13 @@ export default function AdminDashboard() {
                           }`}>
                             {r.status}
                           </span>
-                          <span className="text-sm font-medium text-foreground">
-                            {r.reason}
-                          </span>
+                          <span className="text-sm font-medium text-foreground">{r.reason}</span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Reporter: {r.reporterAnonymousName} · Reported:{" "}
-                          {r.reportedUserAnonymousName}
+                          Reporter: {r.reporterAnonymousName} · Reported: {r.reportedUserAnonymousName}
                         </p>
                         {r.details && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {r.details}
-                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">{r.details}</p>
                         )}
                         <p className="text-xs text-muted-foreground/60 mt-1">
                           {new Date(r.createdAt).toLocaleString()}
@@ -404,43 +374,13 @@ export default function AdminDashboard() {
                       <div className="flex gap-1">
                         {r.status === "pending" && (
                           <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                updateReportStatus({
-                                  reportId: r._id,
-                                  status: "warned",
-                                })
-                              }
-                              className="rounded-xl text-xs"
-                            >
+                            <Button size="sm" variant="outline" onClick={() => updateReportStatus({ reportId: r._id, status: "warned" })} className="rounded-xl text-xs">
                               Warn
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                updateReportStatus({
-                                  reportId: r._id,
-                                  status: "resolved",
-                                })
-                              }
-                              className="rounded-xl text-xs"
-                            >
+                            <Button size="sm" variant="outline" onClick={() => updateReportStatus({ reportId: r._id, status: "resolved" })} className="rounded-xl text-xs">
                               Resolve
                             </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                updateReportStatus({
-                                  reportId: r._id,
-                                  status: "suspended",
-                                })
-                              }
-                              className="rounded-xl text-xs text-red-600"
-                            >
+                            <Button size="sm" variant="outline" onClick={() => updateReportStatus({ reportId: r._id, status: "suspended" })} className="rounded-xl text-xs text-red-600">
                               Suspend
                             </Button>
                           </>
