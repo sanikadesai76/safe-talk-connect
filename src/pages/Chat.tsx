@@ -18,6 +18,7 @@ import {
   Phone,
   Loader2,
   MessageCircle,
+  Info,
 } from "lucide-react";
 import {
   Dialog,
@@ -27,6 +28,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+const CATEGORY_LABELS: Record<string, string> = {
+  listen: "Just someone to listen",
+  talk: "Help thinking through something",
+  lonely: "Feeling lonely",
+  encouragement: "Needs encouragement",
+  difficult: "Having a difficult day",
+  positive: "Wants to share something good",
+  general: "Just wants to talk",
+};
 
 const REPORT_REASONS = [
   "Harassment",
@@ -98,6 +109,14 @@ export default function Chat() {
       ? conversation.listenerAnonymousName || "Listener"
       : conversation.seekerAnonymousName;
   const myRole = conversation.role;
+
+  // Build the seeker's needs labels for the listener context card
+  const seekerNeeds =
+    myRole === "listener" && conversation.seekerCategories?.length
+      ? conversation.seekerCategories
+          .map((c: string) => CATEGORY_LABELS[c] || c)
+          .join(" · ")
+      : null;
 
   const handleSend = async () => {
     if (!input.trim() || sending) return;
@@ -262,6 +281,22 @@ export default function Chat() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-2xl mx-auto space-y-4">
+          {/* Listener context card: what the seeker needs */}
+          {seekerNeeds && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="w-full text-center py-2"
+            >
+              <div className="inline-flex items-center gap-2 glass-card rounded-full px-4 py-2 text-sm text-muted-foreground">
+                <Info className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span>
+                  <span className="font-medium text-foreground">Today they need: </span>
+                  {seekerNeeds}
+                </span>
+              </div>
+            </motion.div>
+          )}
           {messages?.map((msg) => (
             <motion.div
               key={msg._id}
