@@ -143,50 +143,9 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* ── Early returns ─────────────────────────────────── */
-
-  if (!conversationId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">No active conversation</p>
-          <Button
-            variant="outline"
-            onClick={() => navigate("/")}
-            className="mt-4 rounded-xl"
-          >
-            Go home
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!conversation || messages === undefined) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  /* ── Derived state ─────────────────────────────────── */
-
-  const otherName =
-    conversation.role === "seeker"
-      ? conversation.listenerAnonymousName || "Listener"
-      : conversation.seekerAnonymousName;
-  const myRole = conversation.role;
-
-  const seekerNeeds =
-    myRole === "listener" && conversation.seekerCategories?.length
-      ? conversation.seekerCategories
-          .map((c: string) => CATEGORY_LABELS[c] || c)
-          .join(" · ")
-      : null;
-
   /** Group metadata: for each message decide whether to show avatar/name
-   *  and whether a date separator is needed before it. */
+   *  and whether a date separator is needed before it.
+   *  MUST be called unconditionally before any early return. */
   const renderedItems = useMemo(() => {
     if (!messages || messages.length === 0) return [];
 
@@ -234,6 +193,48 @@ export default function Chat() {
 
     return items;
   }, [messages]);
+
+  /* ── Early returns ─────────────────────────────────── */
+
+  if (!conversationId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">No active conversation</p>
+          <Button
+            variant="outline"
+            onClick={() => navigate("/")}
+            className="mt-4 rounded-xl"
+          >
+            Go home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!conversation || messages === undefined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  /* ── Derived state ─────────────────────────────────── */
+
+  const otherName =
+    conversation.role === "seeker"
+      ? conversation.listenerAnonymousName || "Listener"
+      : conversation.seekerAnonymousName;
+  const myRole = conversation.role;
+
+  const seekerNeeds =
+    myRole === "listener" && conversation.seekerCategories?.length
+      ? conversation.seekerCategories
+          .map((c: string) => CATEGORY_LABELS[c] || c)
+          .join(" · ")
+      : null;
 
   /* ── Handlers (unchanged) ──────────────────────────── */
 
