@@ -75,9 +75,14 @@ export default function ListenerDashboard() {
             Your listener application is being reviewed. You'll be notified when
             approved.
           </p>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            Go home
-          </Button>
+          <div className="flex gap-2 justify-center">
+            <Button variant="outline" onClick={() => navigate("/")}>
+              Go home
+            </Button>
+            <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground">
+              Sign out
+            </Button>
+          </div>
         </motion.div>
       </div>
     );
@@ -94,9 +99,14 @@ export default function ListenerDashboard() {
             Unfortunately, your listener application was not approved at this
             time. Please contact support for more information.
           </p>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            Go home
-          </Button>
+          <div className="flex gap-2 justify-center">
+            <Button variant="outline" onClick={() => navigate("/")}>
+              Go home
+            </Button>
+            <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground">
+              Sign out
+            </Button>
+          </div>
         </motion.div>
       </div>
     );
@@ -113,9 +123,14 @@ export default function ListenerDashboard() {
             Your listener account has been suspended. Please contact an
             administrator for assistance.
           </p>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            Go home
-          </Button>
+          <div className="flex gap-2 justify-center">
+            <Button variant="outline" onClick={() => navigate("/")}>
+              Go home
+            </Button>
+            <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground">
+              Sign out
+            </Button>
+          </div>
         </motion.div>
       </div>
     );
