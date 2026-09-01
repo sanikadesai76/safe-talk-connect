@@ -133,21 +133,23 @@ export default function RoleSelect() {
           </motion.button>
         </div>
 
-        <div className="mt-8 space-y-3">
-          <div className="glass-card rounded-2xl p-4 max-w-sm mx-auto">
+        <div className="mt-8 space-y-4">
+          <p className="text-xs text-muted-foreground/60">or</p>
+          <div className="glass-card rounded-2xl p-5 max-w-md mx-auto">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                <Shield className="w-4 h-4 text-amber-600" />
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-amber-600" />
               </div>
               <div className="text-left flex-1">
+                <p className="text-sm font-medium text-foreground">Admin setup</p>
                 <p className="text-xs text-muted-foreground">
-                  First time setting up? Become the admin to manage listeners, reports, and safety resources.
+                  First time setting up Sathiii? Become the admin to manage listeners, reports, and safety resources.
                 </p>
               </div>
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-xl text-xs shrink-0"
+                className="rounded-xl text-sm shrink-0"
                 disabled={adminLoading}
                 onClick={async () => {
                   setAdminLoading(true);
@@ -164,7 +166,7 @@ export default function RoleSelect() {
                 }}
               >
                 {adminLoading ? (
-                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   "Become admin"
                 )}
