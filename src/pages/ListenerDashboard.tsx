@@ -276,28 +276,34 @@ export default function ListenerDashboard() {
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.3 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-        >              <Button
+        >
+          <Button
             variant="outline"
             onClick={() => navigate("/history")}
             className="glass-card rounded-2xl p-4 sm:p-6 h-auto justify-start"
+          >
             <History className="w-5 h-5 mr-3 text-primary" />
             <div className="text-left">
               <p className="font-medium text-foreground">History</p>
               <p className="text-xs text-muted-foreground">Past conversations</p>
             </div>
-          </Button>              <Button
+          </Button>
+          <Button
             variant="outline"
             onClick={() => navigate("/profile")}
             className="glass-card rounded-2xl p-4 sm:p-6 h-auto justify-start"
+          >
             <Heart className="w-5 h-5 mr-3 text-primary" />
             <div className="text-left">
               <p className="font-medium text-foreground">Profile</p>
               <p className="text-xs text-muted-foreground">Your settings</p>
             </div>
-          </Button>              <Button
+          </Button>
+          <Button
             variant="outline"
             onClick={() => navigate("/safety")}
             className="glass-card rounded-2xl p-4 sm:p-6 h-auto justify-start"
+          >
             <Shield className="w-5 h-5 mr-3 text-amber-600" />
             <div className="text-left">
               <p className="font-medium text-foreground">Safety</p>
