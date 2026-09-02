@@ -368,7 +368,7 @@ export default function ListenOnboarding() {
                 </p>
               </div>
 
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-col items-center gap-4">
                 {trainingIndex > 0 && (
                   <Button
                     variant="outline"
@@ -388,8 +388,8 @@ export default function ListenOnboarding() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-3 cursor-pointer justify-center">
+                  <>
+                    <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={trainingAgreed}
@@ -412,7 +412,7 @@ export default function ListenOnboarding() {
                       )}
                       Complete training
                     </Button>
-                  </div>
+                  </>
                 )}
               </div>
             </motion.div>

@@ -467,7 +467,7 @@ export default function Chat() {
               );
             }
 
-            const isOwn = msg.isOwn;
+            const isOwn = user?._id ? msg.senderId === user._id : false;
             const avatar = isOwn ? null : avatarFromName(msg.senderAnonymousName);
 
             /* Spacing between groups: more space when sender changes */
