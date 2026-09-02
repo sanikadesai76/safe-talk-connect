@@ -24,6 +24,7 @@ const Profile = lazy(() => import("./pages/Profile.tsx"));
 const History = lazy(() => import("./pages/History.tsx"));
 const SeekerDashboard = lazy(() => import("./pages/SeekerDashboard.tsx"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard.tsx"));
+const ListenerApplication = lazy(() => import("./pages/ListenerApplication.tsx"));
 const AdminSafetyResources = lazy(() => import("./pages/AdminSafetyResources.tsx"));
 const Safety = lazy(() => import("./pages/Safety.tsx"));
 const Privacy = lazy(() => import("./pages/Privacy.tsx"));
@@ -169,6 +170,14 @@ createRoot(document.getElementById("root")!).render(
                 element={
                   <RequireAuth>
                     <ListenOnboarding />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/listener-application"
+                element={
+                  <RequireAuth>
+                    <ListenerApplication />
                   </RequireAuth>
                 }
               />

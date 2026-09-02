@@ -63,17 +63,43 @@ export default function ListenerDashboard() {
     );
   }
 
+  if (profile?.approvalStatus === "pending" && !profile?.trainingCompleted) {
+    // Approved but needs training
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <motion.div {...fadeUp} className="text-center max-w-md">
+          <BookOpen className="w-12 h-12 text-primary mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-foreground mb-3">
+            Complete Listener Academy
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            Your application was approved! Complete the training to start listening.
+          </p>
+          <div className="flex gap-2 justify-center">
+            <Button onClick={() => navigate("/listen")}>
+              Start Training
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground">
+              Sign out
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (profile?.approvalStatus === "pending") {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <motion.div {...fadeUp} className="text-center max-w-md">
           <Clock className="w-12 h-12 text-amber-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground mb-3">
-            Waiting for approval
+            Application under review
           </h1>
           <p className="text-muted-foreground mb-6">
-            Your listener application is being reviewed. You'll be notified when
-            approved.
+            We're reviewing your listener application. You'll be notified when
+            a decision has been made.
           </p>
           <div className="flex gap-2 justify-center">
             <Button variant="outline" onClick={() => navigate("/")}>

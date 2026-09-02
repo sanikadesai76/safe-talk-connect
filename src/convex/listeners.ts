@@ -62,6 +62,7 @@ export const toggleAvailability = mutation({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .first();
     if (!profile) throw new Error("No listener profile found");
+    // Server-side eligibility: application approved + training completed + not suspended
     if (profile.approvalStatus !== "approved")
       throw new Error(
         profile.approvalStatus === "pending"
@@ -71,6 +72,21 @@ export const toggleAvailability = mutation({
             : profile.approvalStatus === "suspended"
               ? "Your listener account has been suspended. Please contact an administrator."
               : "You must be an approved listener to go online."
+      );
+    if (!profile.trainingCompleted)
+      throw new Error(
+        "You must complete the Listener Academy training before going online."
+      );
+
+    // Verify application was actually approved (not just profile status hacked)
+    const application = await ctx.db
+      .query("listenerApplications")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .order("desc")
+      .first();
+    if (!application || application.status !== "approved")
+      throw new Error(
+        "Your listener application has not been approved. Please complete and submit your application first."
       );
 
     await ctx.db.patch(profile._id, {

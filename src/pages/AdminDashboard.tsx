@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LogOut,
   Users,
@@ -18,9 +18,13 @@ import {
   Eye,
   Search,
   Settings,
+  FileText,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
 } from "lucide-react";
 
-type Tab = "overview" | "users" | "listeners" | "reports";
+type Tab = "overview" | "users" | "listeners" | "reports" | "applications";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -46,11 +50,17 @@ export default function AdminDashboard() {
   const updateReportStatus = useMutation(api.reports.updateReportStatus);
   const seedResources = useMutation(api.seed.seedSafetyResources);
   const clearAllData = useMutation(api.seed.clearAllData);
+  const allApplications = useQuery(api.listenerApplications.getAllApplications, isAdmin ? {} : "skip");
+  const updateAppStatus = useMutation(api.listenerApplications.updateApplicationStatus);
+  const updateAppNotes = useMutation(api.listenerApplications.updateApplicationNotes);
 
   const [tab, setTab] = useState<Tab>("overview");
   const [seeding, setSeeding] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
+  const [reviewNote, setReviewNote] = useState("");
+  const [reviewScores, setReviewScores] = useState<Record<string, number>>({});
 
   const handleSignOut = async () => {
     await signOut();
@@ -113,6 +123,7 @@ export default function AdminDashboard() {
               { id: "users", label: "Users", icon: <Users className="w-4 h-4" /> },
               { id: "listeners", label: "Listeners", icon: <Ear className="w-4 h-4" /> },
               { id: "reports", label: "Reports", icon: <AlertTriangle className="w-4 h-4" /> },
+              { id: "applications", label: "Applications", icon: <FileText className="w-4 h-4" /> },
             ] as const
           ).map((t) => (
             <button
@@ -134,6 +145,11 @@ export default function AdminDashboard() {
               {t.id === "listeners" && pendingListeners?.length ? (
                 <span className="bg-amber-500 text-white text-xs rounded-full px-1.5 py-0.5">
                   {pendingListeners.length}
+                </span>
+              ) : null}
+              {t.id === "applications" && allApplications?.filter((a) => a.status === "submitted").length ? (
+                <span className="bg-amber-500 text-white text-xs rounded-full px-1.5 py-0.5">
+                  {allApplications.filter((a) => a.status === "submitted").length}
                 </span>
               ) : null}
             </button>
@@ -340,6 +356,64 @@ export default function AdminDashboard() {
           </motion.div>
         )}
 
+        {/* Applications Tab */}
+        {tab === "applications" && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            <h2 className="text-lg font-semibold text-foreground">
+              Listener Applications ({allApplications?.length || 0})
+            </h2>
+            {!allApplications || allApplications.length === 0 ? (
+              <div className="glass-card rounded-2xl p-8 text-center">
+                <FileText className="w-8 h-8 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-muted-foreground text-sm">No applications yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {allApplications.map((app) => (
+                  <div key={app._id} className="glass-card rounded-2xl overflow-hidden">
+                    <button
+                      onClick={() => setSelectedAppId(selectedAppId === app._id ? null : app._id)}
+                      className="w-full p-4 text-left flex items-center justify-between hover:bg-muted/30 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${
+                          app.status === "submitted" ? "bg-blue-500" :
+                          app.status === "approved" ? "bg-emerald-500" :
+                          app.status === "rejected" ? "bg-red-500" :
+                          app.status === "under_review" ? "bg-amber-500" :
+                          "bg-gray-400"
+                        }`} />
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            {app.anonymousName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {app.status} · {app.languages?.join(", ")} · {new Date(app.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      {selectedAppId === app._id ? (
+                        <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                      )}
+                    </button>
+
+                    {selectedAppId === app._id && (
+                      <ApplicationReview
+                        applicationId={app._id}
+                        updateAppStatus={updateAppStatus}
+                        updateAppNotes={updateAppNotes}
+                        onClose={() => setSelectedAppId(null)}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+
         {/* Reports Tab */}
         {tab === "reports" && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -397,6 +471,254 @@ export default function AdminDashboard() {
             </div>
           </motion.div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// --- Application Review Sub-component ---
+
+const RUBRIC_CATEGORIES = [
+  { key: "empathy", label: "Empathy" },
+  { key: "listeningOrientation", label: "Listening orientation" },
+  { key: "emotionalRegulation", label: "Emotional regulation" },
+  { key: "selfAwareness", label: "Self-awareness" },
+  { key: "boundaries", label: "Boundaries" },
+  { key: "judgment", label: "Judgment" },
+  { key: "safetyAwareness", label: "Safety awareness" },
+  { key: "overallSuitability", label: "Overall suitability" },
+];
+
+function ApplicationReview({
+  applicationId,
+  updateAppStatus,
+  updateAppNotes,
+  onClose,
+}: {
+  applicationId: string;
+  updateAppStatus: any;
+  updateAppNotes: any;
+  onClose: () => void;
+}) {
+  const detail = useQuery(api.listenerApplications.getApplicationDetail, {
+    applicationId: applicationId as any,
+  });
+  const [adminNotes, setAdminNotes] = useState("");
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [decisionReason, setDecisionReason] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
+
+  if (!detail) {
+    return (
+      <div className="p-6 text-center">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground mx-auto" />
+      </div>
+    );
+  }
+
+  // Initialize scores from existing data
+  useEffect(() => {
+    if (detail.scores) {
+      const s: Record<string, number> = {};
+      for (const cat of RUBRIC_CATEGORIES) {
+        const val = (detail.scores as any)[cat.key];
+        if (val !== undefined) s[cat.key] = val;
+      }
+      setScores(s);
+    }
+    if (detail.adminNotes) setAdminNotes(detail.adminNotes);
+  }, [detail]);
+
+  const handleAction = async (
+    status: string,
+    reason?: string,
+  ) => {
+    setActionLoading(true);
+    try {
+      // Save notes/scores first
+      await updateAppNotes({
+        applicationId: applicationId as any,
+        adminNotes: adminNotes || undefined,
+        scores: Object.keys(scores).length > 0 ? (scores as any) : undefined,
+      });
+      // Then update status
+      await updateAppStatus({
+        applicationId: applicationId as any,
+        status,
+        decisionReason: reason || decisionReason || undefined,
+        adminNotes: adminNotes || undefined,
+        scores: Object.keys(scores).length > 0 ? (scores as any) : undefined,
+      });
+      onClose();
+    } catch (err) {
+      console.error(err);
+    }
+    setActionLoading(false);
+  };
+
+  const scenarioIds = [
+    "listening_vs_solving", "advice_rejected", "repeated_conversation",
+    "emotional_dependency", "anger", "different_values",
+    "personal_trigger", "silence", "crisis_safety", "self_awareness",
+  ];
+
+  return (
+    <div className="p-4 sm:p-6 border-t border-border/50 space-y-6">
+      {/* Flags */}
+      {detail.flags && detail.flags.length > 0 && (
+        <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3">
+          <p className="text-xs font-medium text-amber-700 mb-1">⚠ Flags</p>
+          <ul className="text-xs text-amber-600 space-y-0.5">
+            {detail.flags.map((f: string, i: number) => (
+              <li key={i}>• {f}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Basic Info */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Basic Information</h3>
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div><span className="text-muted-foreground">Anonymous name:</span> {detail.anonymousName || "—"}</div>
+          <div><span className="text-muted-foreground">Age range:</span> {detail.ageRange || "—"}</div>
+          <div><span className="text-muted-foreground">Languages:</span> {detail.languages.join(", ")}</div>
+          <div><span className="text-muted-foreground">Timezone:</span> {detail.timezone || "—"}</div>
+          <div><span className="text-muted-foreground">Availability:</span> {detail.availability || "—"}</div>
+          <div><span className="text-muted-foreground">Previous experience:</span> {detail.previousExperience ? "Yes" : "No"}</div>
+        </div>
+        {detail.experienceDescription && (
+          <p className="text-sm text-muted-foreground mt-2">{detail.experienceDescription}</p>
+        )}
+        <p className="text-sm text-muted-foreground mt-2"><span className="text-foreground font-medium">Why listen:</span> {detail.whyListen}</p>
+        <p className="text-sm text-muted-foreground"><span className="text-foreground font-medium">Comfortable topics:</span> {detail.comfortableTopics.join(", ")}</p>
+        {detail.uncomfortableTopics && (
+          <p className="text-sm text-muted-foreground"><span className="text-foreground font-medium">Uncomfortable topics:</span> {detail.uncomfortableTopics}</p>
+        )}
+      </div>
+
+      {/* Scenario Answers */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Scenario Answers</h3>
+        <div className="space-y-4">
+          {scenarioIds.map((id) => {
+            const answer = detail.answers?.[id];
+            const followAnswer = detail.answers?.[`${id}_followup`];
+            if (!answer) return null;
+            return (
+              <div key={id} className="glass-card rounded-xl p-4">
+                <p className="text-xs font-medium text-primary mb-2 uppercase tracking-wide">
+                  {id.replace(/_/g, " ")}
+                </p>
+                <p className="text-sm text-foreground whitespace-pre-wrap">{answer}</p>
+                {followAnswer && (
+                  <>
+                    <p className="text-xs font-medium text-muted-foreground mt-3 mb-1">Follow-up:</p>
+                    <p className="text-sm text-foreground whitespace-pre-wrap">{followAnswer}</p>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Originality */}
+      <div className="glass-card rounded-xl p-4">
+        <p className="text-xs font-medium text-foreground mb-1">Originality Declaration</p>
+        <p className="text-sm text-muted-foreground">
+          {detail.originalityConfirmed ? "Applicant confirmed answers are their own work." : "NOT confirmed"}
+        </p>
+      </div>
+
+      {/* Rubric */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Review Rubric</h3>
+        <p className="text-xs text-muted-foreground mb-3">
+          Do not approve based only on high scores. Review the actual answers and look for safety or boundary concerns.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {RUBRIC_CATEGORIES.map((cat) => (
+            <div key={cat.key} className="glass-card rounded-xl p-3">
+              <p className="text-xs text-muted-foreground mb-2">{cat.label}</p>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((val) => (
+                  <button
+                    key={val}
+                    onClick={() => setScores((prev) => ({ ...prev, [cat.key]: val }))}
+                    className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
+                      scores[cat.key] === val
+                        ? "bg-primary text-primary-foreground"
+                        : "glass-card text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {val}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Admin Notes */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-2">Admin Notes (private)</h3>
+        <textarea
+          value={adminNotes}
+          onChange={(e) => setAdminNotes(e.target.value)}
+          placeholder="Internal notes — not visible to the applicant..."
+          className="w-full rounded-xl glass-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary min-h-[80px]"
+        />
+      </div>
+
+      {/* Decision Reason */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-2">Decision reason (optional)</h3>
+        <input
+          type="text"
+          value={decisionReason}
+          onChange={(e) => setDecisionReason(e.target.value)}
+          placeholder="Reason for approval/rejection..."
+          className="w-full rounded-xl glass-input px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3">
+        <Button
+          onClick={() => handleAction("approved")}
+          disabled={actionLoading}
+          className="rounded-xl"
+        >
+          {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 h-4 mr-2" />}
+          Approve
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => handleAction("under_review")}
+          disabled={actionLoading}
+          className="rounded-xl"
+        >
+          Under review
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => handleAction("needs_more_info")}
+          disabled={actionLoading}
+          className="rounded-xl"
+        >
+          Request more info
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => handleAction("rejected")}
+          disabled={actionLoading}
+          className="rounded-xl text-red-600 border-red-200"
+        >
+          {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <XCircle className="w-4 h-4 mr-2" />}
+          Reject
+        </Button>
       </div>
     </div>
   );

@@ -107,9 +107,9 @@ export default function ListenOnboarding() {
 
   const [step, setStep] = useState<
     "info" | "languages" | "topics" | "training" | "pending" | "approved"
-  >(listenerProfile?.approvalStatus === "approved" ? "approved" :
-    listenerProfile?.approvalStatus === "pending" ? "pending" :
-    listenerProfile?.trainingCompleted ? "pending" : "info");
+  >(listenerProfile?.approvalStatus === "approved" && !listenerProfile?.trainingCompleted ? "training" :
+    listenerProfile?.approvalStatus === "approved" ? "approved" :
+    listenerProfile?.approvalStatus === "pending" || listenerProfile?.approvalStatus === "rejected" ? "pending" : "info");
 
   const [whyListen, setWhyListen] = useState("");
   const [customWhy, setCustomWhy] = useState("");
@@ -125,9 +125,19 @@ export default function ListenOnboarding() {
     return null;
   }
 
-  if (listenerProfile?.approvalStatus === "approved" && listenerProfile?.availability !== undefined) {
+  // If approved and training complete, go to dashboard
+  if (listenerProfile?.approvalStatus === "approved" && listenerProfile?.trainingCompleted) {
     navigate("/listener-dashboard");
     return null;
+  }
+  // If no profile yet, redirect to application
+  if (!listenerProfile) {
+    navigate("/listener-application");
+    return null;
+  }
+  // If profile exists but application was rejected, show waiting
+  if (listenerProfile?.approvalStatus === "rejected") {
+    setStep("pending");
   }
 
   const toggleLanguage = (lang: string) => {

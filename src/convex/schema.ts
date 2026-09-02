@@ -157,6 +157,46 @@ const schema = defineSchema(
       .index("by_admin", ["adminId"])
       .index("by_target", ["targetId"]),
 
+    listenerApplications: defineTable({
+      userId: v.id("users"),
+      status: v.string(), // draft, submitted, under_review, needs_more_info, approved, rejected
+      // Basic info
+      anonymousName: v.optional(v.string()),
+      ageRange: v.optional(v.string()),
+      languages: v.array(v.string()),
+      timezone: v.optional(v.string()),
+      availability: v.optional(v.string()),
+      whyListen: v.optional(v.string()),
+      previousExperience: v.optional(v.boolean()),
+      experienceDescription: v.optional(v.string()),
+      comfortableTopics: v.array(v.string()),
+      uncomfortableTopics: v.optional(v.string()),
+      // Scenario answers (keyed by scenario ID)
+      answers: v.record(v.string(), v.string()),
+      // Originality
+      originalityConfirmed: v.boolean(),
+      // Admin review
+      adminNotes: v.optional(v.string()),
+      reviewerId: v.optional(v.id("users")),
+      reviewedAt: v.optional(v.number()),
+      decisionReason: v.optional(v.string()),
+      // Rubric scores (1-5, optional)
+      scores: v.optional(v.object({
+        empathy: v.optional(v.number()),
+        listeningOrientation: v.optional(v.number()),
+        emotionalRegulation: v.optional(v.number()),
+        selfAwareness: v.optional(v.number()),
+        boundaries: v.optional(v.number()),
+        judgment: v.optional(v.number()),
+        safetyAwareness: v.optional(v.number()),
+        overallSuitability: v.optional(v.number()),
+      })),
+      // Flags detected during submission
+      flags: v.optional(v.array(v.string())),
+    })
+      .index("by_user", ["userId"])
+      .index("by_status", ["status"]),
+
     siteSettings: defineTable({
       key: v.string(),
       value: v.string(),
