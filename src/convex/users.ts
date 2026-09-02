@@ -32,6 +32,18 @@ export const currentUser = query({
   },
 });
 
+/** Check whether at least one admin account exists. */
+export const adminExists = query({
+  args: {},
+  handler: async (ctx) => {
+    const admin = await ctx.db
+      .query("users")
+      .withIndex("by_role", (q) => q.eq("role", "admin"))
+      .first();
+    return admin !== null;
+  },
+});
+
 export const getCurrentUser = async (ctx: QueryCtx) => {
   const userId = await getAuthUserId(ctx);
   if (userId === null) return null;

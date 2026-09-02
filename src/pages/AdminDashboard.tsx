@@ -45,11 +45,9 @@ export default function AdminDashboard() {
   const banUser = useMutation(api.users.banUser);
   const updateReportStatus = useMutation(api.reports.updateReportStatus);
   const seedResources = useMutation(api.seed.seedSafetyResources);
-  const setFirstAdmin = useMutation(api.seed.setFirstAdmin);
 
   const [tab, setTab] = useState<Tab>("overview");
   const [seeding, setSeeding] = useState(false);
-  const [promoting, setPromoting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSignOut = async () => {
@@ -160,19 +158,6 @@ export default function AdminDashboard() {
                 }}
               >
                 {seeding ? "Seeding..." : "Seed Safety Resources"}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-xl"
-                disabled={promoting}
-                onClick={async () => {
-                  setPromoting(true);
-                  try { await setFirstAdmin(); } catch (e) { console.error(e); }
-                  setPromoting(false);
-                }}
-              >
-                {promoting ? "Promoting..." : "Set First User as Admin"}
               </Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
