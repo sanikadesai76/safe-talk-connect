@@ -100,6 +100,7 @@ export const clearAllData = mutation({
     const tables = [
       "users",
       "listenerProfiles",
+      "listenerApplications",
       "conversations",
       "messages",
       "reports",
@@ -155,14 +156,16 @@ export const setFirstAdmin = mutation({
     // Already an admin? Nothing to do
     if (caller.role === "admin") return { alreadyAdmin: true };
 
-    // If another admin already exists, block this
+    // Demote any existing admin to seeker (only one admin allowed)
     const existingAdmin = await ctx.db
       .query("users")
       .withIndex("by_role", (q) => q.eq("role", "admin"))
       .first();
-    if (existingAdmin) return { adminExists: true };
+    if (existingAdmin && existingAdmin._id !== userId) {
+      await ctx.db.patch(existingAdmin._id, { role: "seeker" });
+    }
 
-    // Promote (works even if user already has seeker/listener role)
+    // Promote this user to admin (works even if they already have seeker/listener role)
     await ctx.db.patch(userId, { role: "admin", status: "active" });
     return { success: true, userId };
   },
