@@ -45,9 +45,11 @@ export default function AdminDashboard() {
   const banUser = useMutation(api.users.banUser);
   const updateReportStatus = useMutation(api.reports.updateReportStatus);
   const seedResources = useMutation(api.seed.seedSafetyResources);
+  const clearAllData = useMutation(api.seed.clearAllData);
 
   const [tab, setTab] = useState<Tab>("overview");
   const [seeding, setSeeding] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSignOut = async () => {
@@ -145,7 +147,7 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <Button
                 variant="outline"
                 size="sm"
@@ -158,6 +160,24 @@ export default function AdminDashboard() {
                 }}
               >
                 {seeding ? "Seeding..." : "Seed Safety Resources"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                disabled={clearing}
+                onClick={async () => {
+                  if (!window.confirm("This will delete ALL user accounts, conversations, messages, reports, and settings. The only thing preserved is your admin account. Are you sure?")) return;
+                  setClearing(true);
+                  try {
+                    const result = await clearAllData();
+                    console.log("Cleared:", result);
+                    window.location.reload();
+                  } catch (e) { console.error(e); }
+                  setClearing(false);
+                }}
+              >
+                {clearing ? "Clearing..." : "Clear All Data"}
               </Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

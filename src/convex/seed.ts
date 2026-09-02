@@ -68,12 +68,75 @@ export const seedSafetyResources = mutation({
 export const promoteToAdmin = mutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
+    const callerId = await getAuthUserId(ctx);
+    if (!callerId) throw new Error("Not authenticated");
+    const caller = await ctx.db.get(callerId);
+    if (caller?.email !== ADMIN_EMAIL || caller?.role !== "admin") {
+      throw new Error("Not authorized");
+    }
     await ctx.db.patch(args.userId, { role: "admin" });
     return { success: true };
   },
 });
 
 const ADMIN_EMAIL = "sddesai1603@gmail.com";
+
+/**
+ * Wipe all user-generated data. Only callable by the admin email.
+ * This resets the platform to a clean state so users can sign up fresh.
+ */
+export const clearAllData = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const caller = await ctx.db.get(userId);
+    if (!caller) throw new Error("User not found");
+    if (caller.email !== ADMIN_EMAIL || caller.role !== "admin") {
+      throw new Error("Not authorized");
+    }
+
+    const tables = [
+      "users",
+      "listenerProfiles",
+      "conversations",
+      "messages",
+      "reports",
+      "blocks",
+      "ratings",
+      "waitingQueue",
+      "safetyResources",
+      "adminActions",
+      "siteSettings",
+    ] as const;
+
+    let totalDeleted = 0;
+    for (const table of tables) {
+      const allDocs = await ctx.db.query(table).collect();
+      for (const doc of allDocs) {
+        await ctx.db.delete(doc._id);
+        totalDeleted++;
+      }
+    }
+
+    // Also wipe auth table entries (sessions, authAccounts, etc.)
+    const authTables = ["authAccounts", "authSessions", "authRefreshTokens"] as const;
+    for (const table of authTables) {
+      try {
+        const allDocs = await ctx.db.query(table).collect();
+        for (const doc of allDocs) {
+          await ctx.db.delete(doc._id);
+          totalDeleted++;
+        }
+      } catch {
+        // Table might not exist — skip
+      }
+    }
+
+    return { success: true, deleted: totalDeleted };
+  },
+});
 
 export const setFirstAdmin = mutation({
   args: {},
