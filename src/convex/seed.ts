@@ -73,24 +73,33 @@ export const promoteToAdmin = mutation({
   },
 });
 
+const ADMIN_EMAIL = "sddesai1603@gmail.com";
+
 export const setFirstAdmin = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
 
-    // Only allow if no admin exists yet
-    const admins = await ctx.db
+    const caller = await ctx.db.get(userId);
+    if (!caller) throw new Error("User not found");
+
+    // Only the specific admin email can become admin
+    if (caller.email !== ADMIN_EMAIL) {
+      throw new Error("Not authorized to become admin");
+    }
+
+    // Already an admin? Nothing to do
+    if (caller.role === "admin") return { alreadyAdmin: true };
+
+    // If another admin already exists, block this
+    const existingAdmin = await ctx.db
       .query("users")
       .withIndex("by_role", (q) => q.eq("role", "admin"))
       .first();
-    if (admins) return { adminExists: true };
+    if (existingAdmin) return { adminExists: true };
 
-    // Only the caller (who must have no role yet) can promote themselves
-    const caller = await ctx.db.get(userId);
-    if (!caller) return { noUserFound: true };
-    if (caller.role) return { alreadyHasRole: true };
-
+    // Promote
     await ctx.db.patch(userId, { role: "admin", status: "active" });
     return { success: true, userId };
   },

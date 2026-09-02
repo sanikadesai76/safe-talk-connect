@@ -134,7 +134,7 @@ export default function RoleSelect() {
           </motion.button>
         </div>
 
-        {adminExists === false && (
+        {adminExists === false && user?.email === "sddesai1603@gmail.com" && (
           <div className="mt-8 space-y-4">
             <p className="text-xs text-muted-foreground/60">or</p>
             <div className="glass-card rounded-2xl p-5 max-w-md mx-auto">
