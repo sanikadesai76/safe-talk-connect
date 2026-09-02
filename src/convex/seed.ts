@@ -116,17 +116,30 @@ export const clearAllData = mutation({
     for (const table of tables) {
       const allDocs = await ctx.db.query(table).collect();
       for (const doc of allDocs) {
+        // Preserve the admin's own user record so they stay logged in
+        if (table === "users" && doc._id === userId) continue;
         await ctx.db.delete(doc._id);
         totalDeleted++;
       }
     }
 
-    // Also wipe auth table entries (sessions, authAccounts, etc.)
+    // Reset admin account to clean state (keep the user, reset derived fields)
+    await ctx.db.patch(userId, {
+      role: "admin",
+      status: "active",
+      anonymousName: undefined,
+      displayName: undefined,
+      languages: undefined,
+    });
+
+    // Wipe auth accounts/sessions (except admin's) so deleted users are logged out
     const authTables = ["authAccounts", "authSessions", "authRefreshTokens"] as const;
     for (const table of authTables) {
       try {
         const allDocs = await ctx.db.query(table).collect();
         for (const doc of allDocs) {
+          // Preserve the admin's own auth session
+          if ((doc as Record<string, unknown>).userId === userId) continue;
           await ctx.db.delete(doc._id);
           totalDeleted++;
         }

@@ -57,6 +57,7 @@ export default function AdminDashboard() {
   const [tab, setTab] = useState<Tab>("overview");
   const [seeding, setSeeding] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [reviewNote, setReviewNote] = useState("");
@@ -177,24 +178,49 @@ export default function AdminDashboard() {
               >
                 {seeding ? "Seeding..." : "Seed Safety Resources"}
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-xl text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
-                disabled={clearing}
-                onClick={async () => {
-                  if (!window.confirm("This will delete ALL user accounts, conversations, messages, reports, and settings. The only thing preserved is your admin account. Are you sure?")) return;
-                  setClearing(true);
-                  try {
-                    const result = await clearAllData();
-                    console.log("Cleared:", result);
-                    window.location.reload();
-                  } catch (e) { console.error(e); }
-                  setClearing(false);
-                }}
-              >
-                {clearing ? "Clearing..." : "Clear All Data"}
-              </Button>
+              {!showClearConfirm ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                  disabled={clearing}
+                  onClick={() => setShowClearConfirm(true)}
+                >
+                  Clear All Data
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-2">
+                  <span className="text-sm text-red-700 font-medium px-2">Delete everything?</span>
+                  <Button
+                    size="sm"
+                    className="rounded-lg bg-red-600 text-white hover:bg-red-700"
+                    disabled={clearing}
+                    onClick={async () => {
+                      setClearing(true);
+                      try {
+                        const result = await clearAllData();
+                        console.log("Cleared:", result);
+                        window.location.reload();
+                      } catch (e) {
+                        console.error(e);
+                        setClearing(false);
+                        setShowClearConfirm(false);
+                      }
+                    }}
+                  >
+                    {clearing ? "Clearing..." : "Yes, clear all"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="rounded-lg"
+                    disabled={clearing}
+                    onClick={() => setShowClearConfirm(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
