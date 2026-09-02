@@ -31,7 +31,7 @@ function GlassNav() {
       className="fixed top-0 left-0 right-0 z-50"
     >
       <div className="mx-auto max-w-6xl px-4 pt-4">
-        <div className="glass-strong rounded-2xl px-6 py-3 flex items-center justify-between">
+        <div className="glass-strong rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
               <HandHeart className="w-4 h-4 text-primary" />
@@ -40,12 +40,12 @@ function GlassNav() {
               Sathiii
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate("/safety")}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground hidden sm:inline-flex"
             >
               Safety
             </Button>
@@ -63,7 +63,7 @@ function GlassNav() {
                   variant="ghost"
                   size="sm"
                   onClick={() => navigate("/auth")}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground hidden sm:inline-flex"
                 >
                   Log in
                 </Button>
@@ -92,7 +92,7 @@ export default function Landing() {
       <GlassNav />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4">
+      <section className="relative pt-28 sm:pt-32 pb-14 sm:pb-20 px-4">
         {/* Decorative blurred orbs */}
         <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-40 right-1/4 w-72 h-72 bg-blue-400/5 rounded-full blur-3xl pointer-events-none" />
@@ -106,7 +106,7 @@ export default function Landing() {
           <motion.h1
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1]"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1]"
           >
             A safe place
             <br />
@@ -116,7 +116,7 @@ export default function Landing() {
           <motion.p
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.2 }}
-            className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="mt-5 sm:mt-6 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
             When you have no one to turn to, Sathiii connects you with a real
             listener — anonymously, without judgment or pressure.
@@ -125,14 +125,14 @@ export default function Landing() {
           <motion.div
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.3 }}
-            className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+            className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
           >
             <Button
               size="lg"
               onClick={() =>
                 navigate(isAuthenticated ? "/seek" : "/auth?returnTo=/seek")
               }
-              className="rounded-2xl px-8 py-6 text-base font-medium shadow-lg shadow-primary/10"
+              className="rounded-2xl px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-medium shadow-lg shadow-primary/10"
             >
               <MessageCircle className="mr-2 h-5 w-5" />
               I need someone to talk to
@@ -143,7 +143,7 @@ export default function Landing() {
               onClick={() =>
                 navigate(isAuthenticated ? "/listen" : "/auth?returnTo=/listen")
               }
-              className="rounded-2xl px-8 py-6 text-base font-medium glass-card"
+              className="rounded-2xl px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-medium glass-card"
             >
               <Ear className="mr-2 h-5 w-5" />
               I want to listen
@@ -224,7 +224,7 @@ export default function Landing() {
       </section>
 
       {/* What Sathiii Is / Is Not */}
-      <section className="py-20 px-4">
+      <section className="py-14 sm:py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -243,13 +243,13 @@ export default function Landing() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="glass-card rounded-2xl p-8"
+              className="glass-card rounded-2xl p-5 sm:p-8"
             >
-              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-emerald-500" />
                 What Sathiii is
               </h3>
-              <ul className="space-y-4">
+              <ul className="space-y-3 sm:space-y-4">
                 {[
                   "Human connection with a real person",
                   "Anonymous conversations",
@@ -270,13 +270,13 @@ export default function Landing() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="glass-card rounded-2xl p-8"
+              className="glass-card rounded-2xl p-5 sm:p-8"
             >
-              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
                 <XCircle className="w-5 h-5 text-red-400" />
                 What Sathiii is NOT
               </h3>
-              <ul className="space-y-4">
+              <ul className="space-y-3 sm:space-y-4">
                 {[
                   "Emergency medical care",
                   "Professional psychotherapy",
@@ -296,13 +296,13 @@ export default function Landing() {
       </section>
 
       {/* Safety Disclaimer */}
-      <section className="py-16 px-4">
+      <section className="py-12 sm:py-16 px-4">
         <div className="max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="glass-card rounded-2xl p-8 text-center border-amber-200/50"
+            className="glass-card rounded-2xl p-5 sm:p-8 text-center border-amber-200/50"
           >
             <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="w-6 h-6 text-amber-600" />
@@ -341,15 +341,15 @@ export default function Landing() {
       </section>
 
       {/* Features */}
-      <section className="py-20 px-4">
+      <section className="py-14 sm:py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-center mb-14"
+            className="text-center mb-10 sm:mb-14"
           >
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground">
               Built with safety in mind
             </h2>
           </motion.div>
@@ -381,7 +381,7 @@ export default function Landing() {
               <motion.div
                 key={item.title}
                 variants={fadeUp}
-                className="glass-card rounded-2xl p-6 group hover:shadow-lg hover:shadow-primary/5 transition-shadow"
+                className="glass-card rounded-2xl p-5 sm:p-6 group hover:shadow-lg hover:shadow-primary/5 transition-shadow"
               >
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 text-primary group-hover:bg-primary/15 transition-colors">
                   {item.icon}
@@ -397,12 +397,12 @@ export default function Landing() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4">
+      <section className="py-14 sm:py-20 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="max-w-3xl mx-auto glass-strong rounded-3xl p-10 text-center"
+          className="max-w-3xl mx-auto glass-strong rounded-3xl p-6 sm:p-10 text-center"
         >
           <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
             Ready to feel heard?
@@ -432,7 +432,7 @@ export default function Landing() {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">              <HandHeart className="w-4 h-4" />
             <span>Sathiii</span>
           </div>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
+          <div className="flex items-center gap-4 sm:gap-6 text-sm text-muted-foreground flex-wrap justify-center">
             <button
               onClick={() => navigate("/privacy")}
               className="hover:text-foreground transition-colors"

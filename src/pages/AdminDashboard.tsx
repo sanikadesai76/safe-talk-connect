@@ -86,7 +86,7 @@ export default function AdminDashboard() {
 
       <div className="max-w-6xl mx-auto relative">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
           <div>
             <p className="text-sm text-muted-foreground">Admin dashboard</p>
             <h1 className="text-2xl font-bold text-foreground">
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-8 glass-card rounded-xl p-1 w-fit">
+        <div className="flex gap-1 mb-8 glass-card rounded-xl p-1 w-fit overflow-x-auto max-w-full">
           {(
             [
               { id: "overview", label: "Overview", icon: <Eye className="w-4 h-4" /> },
@@ -118,7 +118,7 @@ export default function AdminDashboard() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition-all whitespace-nowrap ${
                 tab === t.id
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
             </div>
             <div className="space-y-2">
               {filteredUsers?.map((u) => (
-                <div key={u._id} className="glass-card rounded-2xl p-4 flex items-center justify-between">
+                <div key={u._id}              className="glass-card rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-4">
                     <div className={`w-2 h-2 rounded-full ${
                       u.status === "suspended" ? "bg-red-500" :
@@ -237,7 +237,7 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 self-end sm:self-auto">
                     {u.status !== "suspended" ? (
                       <Button variant="outline" size="sm" onClick={() => suspendUserMutation({ targetUserId: u._id })} className="rounded-xl text-xs">
                         Suspend
@@ -269,8 +269,8 @@ export default function AdminDashboard() {
                 </h2>
                 <div className="space-y-2">
                   {pendingListeners.map((l) => (
-                    <div key={l._id} className="glass-card rounded-2xl p-4">
-                      <div className="flex items-center justify-between">
+                    <div key={l._id} className="glass-card rounded-2xl p-3 sm:p-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div>
                           <p className="text-sm font-medium text-foreground">
                             {l.anonymousName || l.name || "Unknown"}
@@ -283,7 +283,7 @@ export default function AdminDashboard() {
                             Languages: {l.languages.join(", ")} · Topics: {l.topics.join(", ")}
                           </p>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 self-end sm:self-auto">
                           <Button size="sm" onClick={() => approveListener({ profileId: l._id })} className="rounded-xl text-xs">
                             <CheckCircle className="w-3 h-3 mr-1" />
                             Approve
@@ -303,9 +303,8 @@ export default function AdminDashboard() {
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-3">All Listeners</h2>
               <div className="space-y-2">
-                {allListeners?.map((l) => (
-                  <div key={l._id} className="glass-card rounded-2xl p-4">
-                    <div className="flex items-center justify-between">
+                {allListeners?.map((l) => (                    <div key={l._id} className="glass-card rounded-2xl p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center gap-3">
                         <div className={`w-2 h-2 rounded-full ${
                           l.approvalStatus === "approved" ? "bg-emerald-500" :
@@ -346,8 +345,8 @@ export default function AdminDashboard() {
                 </div>
               ) : (
                 reports?.map((r) => (
-                  <div key={r._id} className="glass-card rounded-2xl p-4">
-                    <div className="flex items-center justify-between">
+                  <div key={r._id} className="glass-card rounded-2xl p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
                           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -371,7 +370,7 @@ export default function AdminDashboard() {
                           {new Date(r.createdAt).toLocaleString()}
                         </p>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 self-end sm:self-auto">
                         {r.status === "pending" && (
                           <>
                             <Button size="sm" variant="outline" onClick={() => updateReportStatus({ reportId: r._id, status: "warned" })} className="rounded-xl text-xs">

@@ -348,7 +348,7 @@ export default function Chat() {
   return (
     <div className="h-screen flex flex-col">
       {/* ── Header ──────────────────────────────────────── */}
-      <div className="glass-strong border-b border-border/50 px-4 py-3 flex items-center justify-between shrink-0">
+      <div className="glass-strong border-b border-border/50 px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -364,7 +364,7 @@ export default function Chat() {
           </Button>
           {/* Other participant avatar */}
           <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-semibold shrink-0"
             style={{ background: otherAvatar.bg, color: otherAvatar.fg }}
             aria-hidden
           >
@@ -373,21 +373,21 @@ export default function Chat() {
           <div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-medium text-foreground text-sm">
+              <span className="font-medium text-foreground text-sm truncate max-w-[120px] sm:max-w-none">
                 {otherName}
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground hidden sm:block">
               Anonymous conversation
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setShowSafetyDialog(true)}
-            className="h-8 w-8 text-amber-600 hover:text-amber-700"
+            className="h-8 w-8 text-amber-600 hover:text-amber-700 hidden sm:inline-flex"
           >
             <Shield className="w-4 h-4" />
           </Button>
@@ -395,7 +395,7 @@ export default function Chat() {
             variant="ghost"
             size="icon"
             onClick={() => setShowReportDialog(true)}
-            className="h-8 w-8"
+            className="h-8 w-8 hidden sm:inline-flex"
           >
             <Flag className="w-4 h-4" />
           </Button>
@@ -419,7 +419,7 @@ export default function Chat() {
       </div>
 
       {/* ── Messages ────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6">
+      <div className="flex-1 overflow-y-auto px-2.5 sm:px-4 py-3 sm:py-6">
         <div className="max-w-2xl mx-auto space-y-1">
           {/* Listener context card */}
           {seekerNeeds && (
@@ -563,7 +563,7 @@ export default function Chat() {
       </div>
 
       {/* ── Input ───────────────────────────────────────── */}
-      <div className="glass-strong border-t border-border/50 px-3 sm:px-4 py-3 shrink-0">
+      <div className="glass-strong border-t border-border/50 px-2.5 sm:px-4 py-2.5 sm:py-3 shrink-0">
         <div className="max-w-2xl mx-auto flex gap-2">
           <Input
             ref={inputRef}

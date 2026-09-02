@@ -147,7 +147,7 @@ export default function ListenerDashboard() {
 
       <div className="max-w-4xl mx-auto relative">
         {/* Header */}
-        <motion.div {...fadeUp} className="flex items-center justify-between mb-8">
+        <motion.div {...fadeUp} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
           <div>
             <p className="text-sm text-muted-foreground">Listener dashboard</p>
             <h1 className="text-2xl font-bold text-foreground">
@@ -164,9 +164,9 @@ export default function ListenerDashboard() {
         {activeConversation && (
           <motion.div
             {...fadeUp}
-            className="glass-card rounded-2xl p-6 mb-6 border-l-4 border-l-emerald-500"
+            className="glass-card rounded-2xl p-4 sm:p-6 mb-6 border-l-4 border-l-emerald-500"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <div>
@@ -191,9 +191,9 @@ export default function ListenerDashboard() {
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.1 }}
-          className="glass-card rounded-2xl p-6 mb-6"
+          className="glass-card rounded-2xl p-4 sm:p-6 mb-6"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                 isAvailable ? "bg-emerald-500/10" : "bg-muted"
@@ -276,34 +276,28 @@ export default function ListenerDashboard() {
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.3 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-        >
-          <Button
+        >              <Button
             variant="outline"
             onClick={() => navigate("/history")}
-            className="glass-card rounded-2xl p-6 h-auto justify-start"
-          >
+            className="glass-card rounded-2xl p-4 sm:p-6 h-auto justify-start"
             <History className="w-5 h-5 mr-3 text-primary" />
             <div className="text-left">
               <p className="font-medium text-foreground">History</p>
               <p className="text-xs text-muted-foreground">Past conversations</p>
             </div>
-          </Button>
-          <Button
+          </Button>              <Button
             variant="outline"
             onClick={() => navigate("/profile")}
-            className="glass-card rounded-2xl p-6 h-auto justify-start"
-          >
+            className="glass-card rounded-2xl p-4 sm:p-6 h-auto justify-start"
             <Heart className="w-5 h-5 mr-3 text-primary" />
             <div className="text-left">
               <p className="font-medium text-foreground">Profile</p>
               <p className="text-xs text-muted-foreground">Your settings</p>
             </div>
-          </Button>
-          <Button
+          </Button>              <Button
             variant="outline"
             onClick={() => navigate("/safety")}
-            className="glass-card rounded-2xl p-6 h-auto justify-start"
-          >
+            className="glass-card rounded-2xl p-4 sm:p-6 h-auto justify-start"
             <Shield className="w-5 h-5 mr-3 text-amber-600" />
             <div className="text-left">
               <p className="font-medium text-foreground">Safety</p>
