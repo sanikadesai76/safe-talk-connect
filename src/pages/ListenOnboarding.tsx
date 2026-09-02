@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fadeUpExit } from "@/lib/animations";
 import {
   ArrowRight,
@@ -120,21 +120,22 @@ export default function ListenOnboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (user?.role === "admin") {
-    navigate("/admin");
-    return null;
-  }
-
-  // If approved and training complete, go to dashboard
-  if (listenerProfile?.approvalStatus === "approved" && listenerProfile?.trainingCompleted) {
-    navigate("/listener-dashboard");
-    return null;
-  }
-  // If no profile yet, redirect to application
-  if (!listenerProfile) {
-    navigate("/listener-application");
-    return null;
-  }
+  // Redirect based on state (moved from render to useEffect)
+  useEffect(() => {
+    if (user?.role === "admin") {
+      navigate("/admin", { replace: true });
+      return;
+    }
+    if (listenerProfile === undefined) return; // still loading
+    if (listenerProfile?.approvalStatus === "approved" && listenerProfile?.trainingCompleted) {
+      navigate("/listener-dashboard", { replace: true });
+      return;
+    }
+    if (!listenerProfile) {
+      navigate("/listener-application", { replace: true });
+      return;
+    }
+  }, [user, listenerProfile, navigate]);
   // If profile exists but application was rejected, show waiting
   if (listenerProfile?.approvalStatus === "rejected") {
     setStep("pending");

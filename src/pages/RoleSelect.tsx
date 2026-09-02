@@ -25,7 +25,6 @@ export default function RoleSelect() {
   const { user, isLoading } = useAuth();
   const setRole = useMutation(api.users.setRole);
   const setFirstAdmin = useMutation(api.seed.setFirstAdmin);
-  const adminExists = useQuery(api.users.adminExists);
   const [loading, setLoading] = useState<"seeker" | "listener" | null>(null);
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);

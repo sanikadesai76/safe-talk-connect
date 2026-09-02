@@ -51,7 +51,7 @@ export default function ListenerDashboard() {
 
   // Role guard: redirect non-listeners
   if (!isLoading && user && user.role !== "listener") {
-    return <Navigate to="/seek" replace />;
+    return <Navigate to={user.role === "admin" ? "/admin" : "/seek"} replace />;
   }
 
   // Still loading
