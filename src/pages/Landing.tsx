@@ -62,14 +62,14 @@ function GlassNav() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate("/login")}
                   className="text-muted-foreground hover:text-foreground hidden sm:inline-flex"
                 >
                   Log in
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => navigate("/auth")}
+                  onClick={() => navigate("/signup")}
                   className="rounded-xl"
                 >
                   Get started
@@ -130,7 +130,7 @@ export default function Landing() {
             <Button
               size="lg"
               onClick={() =>
-                navigate(isAuthenticated ? "/seek" : "/auth?returnTo=/seek")
+                navigate(isAuthenticated ? "/seek" : "/signup?returnTo=/seek")
               }
               className="rounded-2xl px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-medium shadow-lg shadow-primary/10"
             >
@@ -141,7 +141,7 @@ export default function Landing() {
               size="lg"
               variant="outline"
               onClick={() =>
-                navigate(isAuthenticated ? "/listen" : "/auth?returnTo=/listen")
+                navigate(isAuthenticated ? "/listen" : "/signup?returnTo=/listen")
               }
               className="rounded-2xl px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base font-medium glass-card"
             >
@@ -415,7 +415,7 @@ export default function Landing() {
             <Button
               size="lg"
               onClick={() =>
-                navigate(isAuthenticated ? "/seek" : "/auth?returnTo=/seek")
+                navigate(isAuthenticated ? "/seek" : "/signup?returnTo=/seek")
               }
               className="rounded-2xl px-8 py-6 text-base font-medium"
             >
