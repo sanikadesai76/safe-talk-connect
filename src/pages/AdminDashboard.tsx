@@ -508,17 +508,9 @@ function ApplicationReview({
   const [decisionReason, setDecisionReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
-  if (!detail) {
-    return (
-      <div className="p-6 text-center">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground mx-auto" />
-      </div>
-    );
-  }
-
-  // Initialize scores from existing data
+  // Initialize scores from existing data (must be before any early return)
   useEffect(() => {
-    if (detail.scores) {
+    if (detail?.scores) {
       const s: Record<string, number> = {};
       for (const cat of RUBRIC_CATEGORIES) {
         const val = (detail.scores as any)[cat.key];
@@ -526,8 +518,16 @@ function ApplicationReview({
       }
       setScores(s);
     }
-    if (detail.adminNotes) setAdminNotes(detail.adminNotes);
+    if (detail?.adminNotes) setAdminNotes(detail.adminNotes);
   }, [detail]);
+
+  if (!detail) {
+    return (
+      <div className="p-6 text-center">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground mx-auto" />
+      </div>
+    );
+  }
 
   const handleAction = async (
     status: string,
