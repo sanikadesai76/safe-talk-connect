@@ -99,7 +99,7 @@ export const setFirstAdmin = mutation({
       .first();
     if (existingAdmin) return { adminExists: true };
 
-    // Promote
+    // Promote (works even if user already has seeker/listener role)
     await ctx.db.patch(userId, { role: "admin", status: "active" });
     return { success: true, userId };
   },

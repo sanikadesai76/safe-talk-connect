@@ -30,16 +30,16 @@ export default function RoleSelect() {
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminError, setAdminError] = useState<string | null>(null);
 
-  // Redirect users who already have a role — never in the render body
+  // Redirect users who already have a role (except admin-email user who may need to become admin)
   useEffect(() => {
     if (isLoading) return;
-    if (user?.role === "seeker") navigate("/dashboard", { replace: true });
-    else if (user?.role === "listener") navigate("/listener-dashboard", { replace: true });
-    else if (user?.role === "admin") navigate("/admin", { replace: true });
+    if (user?.role === "admin") navigate("/admin", { replace: true });
+    else if (user?.role === "seeker" && user?.email !== "sddesai1603@gmail.com") navigate("/dashboard", { replace: true });
+    else if (user?.role === "listener" && user?.email !== "sddesai1603@gmail.com") navigate("/listener-dashboard", { replace: true });
   }, [user, isLoading, navigate]);
 
-  // Show nothing while loading or redirecting
-  if (isLoading || user?.role) return null;
+  // Show nothing while loading
+  if (isLoading) return null;
 
   const handleSelect = async (role: "seeker" | "listener") => {
     setLoading(role);
